@@ -117,7 +117,7 @@ Contributions to chatgpt-node are welcome! If you encounter any issues, have fea
 
 ## License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This project is licensed under the [MIT License](https://github.com/BandaySajid/chatgpt-node/blob/main/LICENSE).
 
 ## Acknowledgements
 
