@@ -19,5 +19,9 @@
   "description": "",
   "dependencies": {
     "cookiefile": "^1.0.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BandaySajid/chatgpt-node"
   }
 }
