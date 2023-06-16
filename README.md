@@ -26,7 +26,7 @@ To use chatgpt-node, you need to create an instance of the `Gpt` class by provid
 const { Gpt } = require("chatgpt-node");
 
 const user = new Gpt({
-  email: process.env.PASSWORD, //your_chat_gpt_email
+  email: process.env.EMAIL, //your_chat_gpt_email
   password: process.env.PASSWORD, //your_chat_gpt_password
 });
 ```

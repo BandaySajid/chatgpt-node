@@ -15,7 +15,7 @@
     "ChatGpt"
   ],
   "author": "Sajid Banday",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "cookiefile": "^1.0.10"
