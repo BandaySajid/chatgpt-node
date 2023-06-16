@@ -1,0 +1,23 @@
+{
+  "name": "chatgpt-node",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {},
+  "keywords": [
+    "GPT",
+    "AI",
+    "artificial intelligence",
+    "text generation",
+    "chatbot",
+    "NLP",
+    "OpenAI",
+    "ChatGpt"
+  ],
+  "author": "Sajid Banday",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cookiefile": "^1.0.10"
+  }
+}

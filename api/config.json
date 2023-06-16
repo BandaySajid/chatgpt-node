@@ -1,0 +1,27 @@
+{
+  "conversation": {
+    "url": "https://chat.openai.com/backend-api/conversation",
+    "headers": {
+      "Accept": "text/event-stream",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Accept-Encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+      "Authorization": "",
+      "Origin": "https://chat.openai.com",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+      "Te": "trailers",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    },
+    "method" : "POST"
+  },
+
+  "login": {
+    "auth": {
+      "host": "auth0.openai.com",
+      "path": "/authorize?client_id=TdJIcbe16WoTHtN95nyywh5E4yOo6ItG&scope=openid%20email%20profile%20model.request%20model.read%20organization.read%20organization.write&response_type=code&redirect_uri=https%3A%2F%2Fchat.openai.com%2Fapi%2Fauth%2Fcallback%2Fauth0&audience=https%3A%2F%2Fapi.openai.com%2Fv1&prompt=login&state=${state}&code_challenge=${challenge}&code_challenge_method=S256",
+      "method" : "GET"
+    }
+  }
+}
