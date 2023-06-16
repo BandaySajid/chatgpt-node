@@ -3,6 +3,11 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 import { Transform } from 'stream';
 import generateRandomId from '../utils/generateRandomId.js';
+import { fileURLToPath } from 'url';
+const path = require('path');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const bypassPath = path.join(__dirname, '..', '..', 'bypass');
 
 function parseHeaders(headers) {
     let newHeaders = [];
@@ -34,8 +39,9 @@ export default function chat({ stream, url, headers, parent_message_id, message 
         "arkose_token": null
     };
 
-    const cmd = `./bypass/curl_chrome104 -s -X POST ${url} ${parseHeaders(headers)} -d '${JSON.stringify(body)}'`;
-    const curlProcess = exec(cmd)
+    const cmd = `${bypassPath}/curl_chrome104 -s -X POST ${url} ${parseHeaders(headers)} -d '${JSON.stringify(body)}'`;
+    const curlProcess = exec(cmd, () => {
+    })
     if (stream) {
         let content = '';
         const transFormStream = new Transform({
@@ -72,7 +78,9 @@ export default function chat({ stream, url, headers, parent_message_id, message 
         return transFormStream;
     }
     else {
+
         return new Promise((resolve, reject) => {
+
             let contentArray = [];
             let nonStreamContent = '';
 
@@ -111,6 +119,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
             curlProcess.stderr.on('data', (err) => {
                 reject(err);
             });
+
         });
     }
 };
