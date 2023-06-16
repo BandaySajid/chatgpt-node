@@ -4,6 +4,11 @@
 
 chatgpt-node is a Node.js library that provides access to the ChatGPT web-API for free. While ChatGPT provides an API to access its model, it is a paid service, making it inaccessible for everyone. The chatgpt-node library aims to bridge this gap by allowing developers to authenticate/login via web-api and start conversations with the ChatGPT model, enabling them to integrate chatbot functionality into their applications, websites, and more.
 
+
+## NOTE
+
+Currently, signin functionality is supported only with OPENAI : Auth0 :  email and password. `GOOGLE, MICROSOFT, APPLE` Oauth login is not supported. 
+
 ## Features
 
 - Seamless authentication process with ChatGPT.
