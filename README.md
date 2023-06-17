@@ -125,8 +125,8 @@ The chatgpt-node library was developed by `Sajid Banday`. It includes the use of
 
 ## Privacy and Data Usage
 
-chatgpt-node respects user privacy and does not store or transmit any user data. It is designed to solely facilitate communication with the ChatGPT web / evenstream API and does not retain any information or perform any data processing beyond the scope of the library's functionality.
+chatgpt-node respects user privacy and does not store or transmit any user data. It is designed to solely facilitate communication with the ChatGPT web / eventstream API and does not retain any information or perform any data processing beyond the scope of the library's functionality.
 
-Please note that chatgpt-node does not modify or analyze the content of the messages sent by users. It acts as a bridge between the user and the ChatGPT web / evenstream API, transmitting messages and receiving responses without any interference or manipulation of the data.
+Please note that chatgpt-node does not modify or analyze the content of the messages sent by users. It acts as a bridge between the user and the ChatGPT web / eventstream API, transmitting messages and receiving responses without any interference or manipulation of the data.
 
 The session data / token is saved in a local file to maintain the session, make sure to not include it anywhere.
