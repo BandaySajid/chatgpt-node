@@ -12,7 +12,7 @@ const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const bypassPath = path.join(__dirname, '..', '..', 'bypass');
-const cookiePath = path.join(__dirname, '..', '..');
+const cookiePath = path.join(__dirname, '..', '..', '..', '..');
 
 function curl({ url, body, cookie, auth = false }) {
     return new Promise((resolve, reject) => {
