@@ -19,7 +19,12 @@ function parseHeaders(headers) {
         finalString += ` -H '${header}' `
     });
     return finalString;
-}
+};
+
+function parseMessage(message) {
+    let parsedMessage = message.replace(/[,"']/g, "");
+    return parsedMessage;
+};
 
 export default function chat({ stream, url, headers, parent_message_id, message }) {
     const body = {
@@ -28,7 +33,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
             {
                 "id": generateRandomId(),
                 "author": { "role": "user" },
-                "content": { "content_type": "text", "parts": [message] },
+                "content": { "content_type": "text", "parts": [parseMessage(message)] },
                 "metadata": {}
             }
         ],
@@ -106,9 +111,14 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                     main = validJson[validJson.length - 1];
                 }
                 if (validJson.length > 0) {
-                    const parsed = JSON.parse(main).message.content.parts[0];
-                    nonStreamContent += parsed.slice(nonStreamContent.length);
-                    contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
+                    try {
+                        const parsed = JSON.parse(main).message.content.parts[0];
+                        nonStreamContent += parsed.slice(nonStreamContent.length);
+                        contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
+                    }
+                    catch (err) {
+                        reject(err);
+                    }
                 }
             });
 
