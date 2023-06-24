@@ -27,7 +27,7 @@ if not %errorlevel%==0 (
 REM Remove the archive file
 del "%outputFile%"
 
-set "sourceDirectory=bypass\windows\curl-impersonate-win\config"
+set "sourceDirectory=bypass\\windows\\curl-impersonate-win\\config"
 set "destinationDirectory=config"
 
 REM Get the current directory
