@@ -8,16 +8,18 @@ import fs from 'fs/promises';
 import cookiefile from 'cookiefile';
 import os from 'os';
 import { fileURLToPath } from 'url';
+import { parseCmd } from '../utils/parser.js';
 const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const bypassPath = path.join(__dirname, '..', '..', 'bypass');
-const cookiePath = path.join(__dirname, '..', '..', '..', '..');
+const bypassPath = path.join(__dirname, '..', '..', 'bypass', 'curl_chrome104');
+const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
 
 function curl({ url, body, cookie, auth = false }) {
     return new Promise((resolve, reject) => {
         if (body) {
-            exec(`${bypassPath}/curl_chrome104 -c cookie.txt -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d '${body}'`, (err, stdout, stderr) => {
+            const cmd = `${bypassPath} -c ${cookiePath} -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d '${body}'`;
+            exec(parseCmd(cmd), (err, stdout, stderr) => {
                 if (err) {
                     reject(err);
                 }
@@ -26,7 +28,8 @@ function curl({ url, body, cookie, auth = false }) {
         }
         else {
             if (auth) {
-                exec(`${bypassPath}/curl_chrome104 "${url}" -c cookie.txt -H 'Cookie: ${cookie}'`, (err, stdout, stderr) => {
+                const cmd = `${bypassPath} "${url}" -c ${cookiePath} -H 'Cookie: ${cookie}'`;
+                exec(parseCmd(cmd), (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
                     }
@@ -34,7 +37,8 @@ function curl({ url, body, cookie, auth = false }) {
                 });
             }
             else {
-                exec(`${bypassPath}/curl_chrome104 -c cookie.txt "${url}"`, (err, stdout, stderr) => {
+                const cmd = `${bypassPath} -c ${cookiePath} "${url}"`;
+                exec(parseCmd(cmd), (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
                     }
@@ -46,13 +50,13 @@ function curl({ url, body, cookie, auth = false }) {
 };
 
 function readCookie() {
-    const cookiemap = new cookiefile.CookieMap(`${cookiePath}/cookie.txt`);
+    const cookiemap = new cookiefile.CookieMap(cookiePath);
     const allCookies = cookiemap.toRequestHeader().replace('Cookie: ', '');
     return allCookies;
 }
 
 async function cropCsrf() {
-    let data = await fs.readFile('cookie.txt', 'utf-8');
+    let data = await fs.readFile(cookiePath, 'utf-8');
     const regex = /^#HttpOnly(?:_.*?)?\t(?:TRUE|FALSE)\t\/\t(?:TRUE|FALSE)\t\d+\t(.*?)\t(.*?)$/gm;
 
     let match;
@@ -204,10 +208,13 @@ async function authorize({ email, password }) {
 
             const session = await curl({ url: 'https://chat.openai.com/api/auth/session', cookie: sessionCookies, auth: true });
 
-            await fs.writeFile(`${os.homedir()}/.gpt-js-session.json`, JSON.stringify(JSON.parse(session)));
+            const sessionFilePath = path.join(os.tmpdir(), '.gpt-js-session.json');
+
+
+            await fs.writeFile(sessionFilePath, JSON.stringify(JSON.parse(session)));
             try {
-                await fs.access(`${cookiePath}/cookie.txt`)
-                await fs.unlink(`${cookiePath}/cookie.txt`);
+                await fs.access(cookiePath)
+                await fs.unlink(cookiePath);
             }
             catch (err) {
                 console.log('cookie file does not exist')
@@ -218,8 +225,8 @@ async function authorize({ email, password }) {
 
         else {
             try {
-                await fs.access(`${cookiePath}/cookie.txt`)
-                await fs.unlink(`${cookiePath}/cookie.txt`);
+                await fs.access(cookiePath)
+                await fs.unlink(cookiePath);
             }
             catch (err) {
                 console.log('cookie file does not exist')
@@ -230,8 +237,8 @@ async function authorize({ email, password }) {
     }
     catch (err) {
         try {
-            await fs.access(`${cookiePath}/cookie.txt`)
-            await fs.unlink(`${cookiePath}/cookie.txt`);
+            await fs.access(cookiePath)
+            await fs.unlink(cookiePath);
         }
         catch (err) {
             console.log('cookie file does not exist')
