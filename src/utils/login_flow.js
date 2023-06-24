@@ -18,7 +18,7 @@ const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
 function curl({ url, body, cookie, auth = false }) {
     return new Promise((resolve, reject) => {
         if (body) {
-            const cmd = `${bypassPath} -c ${cookiePath} -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d '${body}'`;
+            const cmd = `${bypassPath} -c ${cookiePath} -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d "${body}"`;
             exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);

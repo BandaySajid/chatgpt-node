@@ -22,7 +22,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
         "arkose_token": null
     };
 
-    const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d '${JSON.stringify(body)}'`;
+    const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d "${JSON.stringify(body)}"`;
     const curlProcess = exec(cmd, () => {
     })
     if (stream) {
