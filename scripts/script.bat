@@ -27,8 +27,14 @@ if not %errorlevel%==0 (
 REM Remove the archive file
 del "%outputFile%"
 
-REM Move the folder to the destination
-move "bypass\windows\curl-impersonate-win\config*.*" "config\"
+set "sourceDirectory=bypass\windows\curl-impersonate-win\config"
+set "destinationDirectory=config"
+
+REM Get the current directory
+for %%I in (.) do set "currentDir=%%~dpI"
+
+REM Move the source directory to the destination within the current directory
+move "%currentDir%\%sourceDirectory%" "%currentDir%\%destinationDirectory%"
 
 echo Zip file downloaded and extracted successfully.
 exit /b 0
