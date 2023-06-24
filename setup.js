@@ -5,7 +5,7 @@ function runScript() {
     const isWindows = os.platform() === 'win32';
 
     if (isWindows) {
-        exec('scripts/script.bat', (err, stdout, stderr) => {
+        exec('scripts\\script.bat', (err, stdout, stderr) => {
             if (err) {
                 console.error('Error:', err.message);
             } else {

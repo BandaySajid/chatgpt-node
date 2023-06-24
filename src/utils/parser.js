@@ -26,7 +26,7 @@ function parseMessage(message) {
 function getBypassPath() {
     let bypassPath;
     if (os.platform() === 'win32') {
-        bypassPath = path.join(__dirname, '..', '..', 'bypass', 'windows', 'curl_chrome104');
+        bypassPath = path.join(__dirname, '..', '..', 'bypass', 'windows', 'curl-impersonate-win', 'curl_chrome104.bat');
     }
     else {
         bypassPath = path.join(__dirname, '..', '..', 'bypass', 'linux', 'curl_chrome104');
