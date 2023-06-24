@@ -18,6 +18,12 @@ export default function verifySession(email) {
         const sessionPath = path.join(os.tmpdir(), '.gpt-js-session.json');
         const session = require(sessionPath);
 
+        if(session === {}){
+            return {
+                authenticated: false, accessToken: undefined, error: 'no session saved'
+            };
+        }
+
         const expired = checkExpired(session.expires);
 
         if (expired) {

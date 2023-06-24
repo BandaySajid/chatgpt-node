@@ -18,7 +18,7 @@ const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
 function curl({ url, body, cookie, auth = false }) {
     return new Promise((resolve, reject) => {
         if (body) {
-            const cmd = `${bypassPath} -c ${cookiePath} -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d "${body}"`;
+            const cmd = `${bypassPath} -c cookie.txt -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d "${body}"`;
             exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);
@@ -28,7 +28,7 @@ function curl({ url, body, cookie, auth = false }) {
         }
         else {
             if (auth) {
-                const cmd = `${bypassPath} "${url}" -c ${cookiePath} -H "Cookie: ${cookie}"`;
+                const cmd = `${bypassPath} "${url}" -c cookie.txt -H "Cookie: ${cookie}"`;
                 exec(cmd, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
@@ -37,7 +37,7 @@ function curl({ url, body, cookie, auth = false }) {
                 });
             }
             else {
-                const cmd = `${bypassPath} -c ${cookiePath} "${url}"`;
+                const cmd = `${bypassPath} -c cookie.txt "${url}"`;
                 exec(cmd, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
@@ -198,7 +198,6 @@ async function authorize({ email, password }) {
             });
 
             const resumeAuthCookies = parseCookies(resumeAuth.headers['set-cookie']);
-
 
             const authCodeUrl = resumeAuth.headers.location;
 
