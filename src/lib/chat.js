@@ -1,50 +1,28 @@
 import { exec } from 'child_process';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
 import { Transform } from 'stream';
 import generateRandomId from '../utils/generateRandomId.js';
-import { fileURLToPath } from 'url';
-const path = require('path');
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const bypassPath = path.join(__dirname, '..', '..', 'bypass');
-
-function parseHeaders(headers) {
-    let newHeaders = [];
-    for (const h in headers) {
-        newHeaders.push(`${h}: ${headers[h]}`);
-    }
-    let finalString = '';
-    newHeaders.map((header) => {
-        finalString += ` -H '${header}' `
-    });
-    return finalString;
-};
-
-function parseMessage(message) {
-    let parsedMessage = message.replace(/[,"']/g, "");
-    return parsedMessage;
-};
+import { getBypassPath, parseHeaders, parseMessage } from '../utils/parser.js';
+let bypassPath = getBypassPath();
 
 export default function chat({ stream, url, headers, parent_message_id, message }) {
     const body = {
-        "action": "next",
-        "messages": [
+        action: 'next',
+        messages: [
             {
-                "id": generateRandomId(),
-                "author": { "role": "user" },
-                "content": { "content_type": "text", "parts": [parseMessage(message)] },
-                "metadata": {}
+                id: generateRandomId(),
+                author: { role: 'user' },
+                content: { content_type: 'text', parts: [parseMessage(message)] },
+                metadata: {}
             }
         ],
-        "parent_message_id": parent_message_id,
-        "model": "text-davinci-002-render-sha",
-        "timezone_offset_min": -330,
-        "history_and_training_disabled": false,
-        "arkose_token": null
+        parent_message_id,
+        model: 'text-davinci-002-render-sha',
+        timezone_offset_min: -330,
+        history_and_training_disabled: false,
+        arkose_token: null
     };
 
-    const cmd = `${bypassPath}/curl_chrome104 -s -X POST ${url} ${parseHeaders(headers)} -d '${JSON.stringify(body)}'`;
+    const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d "${JSON.stringify(body).replace(/"/g, '\\"')}"`;
     const curlProcess = exec(cmd, () => {
     })
     if (stream) {
@@ -117,7 +95,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                         contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
                     }
                     catch (err) {
-                        reject(err);
+                        reject(new Error(`error while parsing message, try again. Error : ${err.message}`));
                     }
                 }
             });

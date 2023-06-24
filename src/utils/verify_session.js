@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import os from 'os';
 const require = createRequire(import.meta.url);
+import path from 'node:path';
 
 function checkExpired(expiresString) {
     const targetDateTime = new Date(expiresString);
@@ -14,8 +15,14 @@ function checkExpired(expiresString) {
 
 export default function verifySession(email) {
     try {
-        const path = os.homedir() + '/.gpt-js-session.json';
-        const session = require(path);
+        const sessionPath = path.join(os.tmpdir(), '.gpt-js-session.json');
+        const session = require(sessionPath);
+
+        if(session === {}){
+            return {
+                authenticated: false, accessToken: undefined, error: 'no session saved'
+            };
+        }
 
         const expired = checkExpired(session.expires);
 
