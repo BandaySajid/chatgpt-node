@@ -19,6 +19,8 @@ Currently, signin functionality is supported only with OPENAI : Auth0 :  email a
 
 To use chatgpt-node in your Node.js project, you can install it via npm:
 
+NOTE : Current version `1.0.6` is working fine on linux, but need to fix some authentication errors on windows
+
 ```shell
 node setup.js
 ```
