@@ -1,10 +1,10 @@
-function parseCmd(cmd) {
-    if (process.platform === 'win32') {
-        return `cmd.exe /c "${cmd}"`
-    } else {
-        return cmd;
-    }
-};
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+import { fileURLToPath } from 'url';
+const path = require('path');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import os from 'os';
 
 function parseHeaders(headers) {
     let newHeaders = [];
@@ -23,4 +23,15 @@ function parseMessage(message) {
     return parsedMessage;
 };
 
-export { parseCmd, parseHeaders, parseMessage };
+function getBypassPath() {
+    let bypassPath;
+    if (os.platform() === 'win32') {
+        bypassPath = path.join(__dirname, '..', '..', 'bypass', 'windows', 'curl_chrome104');
+    }
+    else {
+        bypassPath = path.join(__dirname, '..', '..', 'bypass', 'linux', 'curl_chrome104');
+    };
+    return bypassPath;
+}
+
+export { getBypassPath, parseHeaders, parseMessage };

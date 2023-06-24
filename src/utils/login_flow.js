@@ -8,18 +8,18 @@ import fs from 'fs/promises';
 import cookiefile from 'cookiefile';
 import os from 'os';
 import { fileURLToPath } from 'url';
-import { parseCmd } from '../utils/parser.js';
+import { getBypassPath } from '../utils/parser.js';
 const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const bypassPath = path.join(__dirname, '..', '..', 'bypass', 'curl_chrome104');
+const bypassPath = getBypassPath();
 const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
 
 function curl({ url, body, cookie, auth = false }) {
     return new Promise((resolve, reject) => {
         if (body) {
             const cmd = `${bypassPath} -c ${cookiePath} -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d '${body}'`;
-            exec(parseCmd(cmd), (err, stdout, stderr) => {
+            exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);
                 }
@@ -29,7 +29,7 @@ function curl({ url, body, cookie, auth = false }) {
         else {
             if (auth) {
                 const cmd = `${bypassPath} "${url}" -c ${cookiePath} -H 'Cookie: ${cookie}'`;
-                exec(parseCmd(cmd), (err, stdout, stderr) => {
+                exec(cmd, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
                     }
@@ -38,7 +38,7 @@ function curl({ url, body, cookie, auth = false }) {
             }
             else {
                 const cmd = `${bypassPath} -c ${cookiePath} "${url}"`;
-                exec(parseCmd(cmd), (err, stdout, stderr) => {
+                exec(cmd, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
                     }

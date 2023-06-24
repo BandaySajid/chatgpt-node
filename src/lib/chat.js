@@ -1,14 +1,8 @@
 import { exec } from 'child_process';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
 import { Transform } from 'stream';
 import generateRandomId from '../utils/generateRandomId.js';
-import { fileURLToPath } from 'url';
-import { parseCmd, parseHeaders, parseMessage } from '../utils/parser.js';
-const path = require('path');
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const bypassPath = path.join(__dirname, '..', '..', 'bypass', 'curl_chrome104');
+import { getBypassPath, parseHeaders, parseMessage } from '../utils/parser.js';
+let bypassPath = getBypassPath();
 
 export default function chat({ stream, url, headers, parent_message_id, message }) {
     const body = {
@@ -29,7 +23,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
     };
 
     const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d '${JSON.stringify(body)}'`;
-    const curlProcess = exec(parseCmd(cmd), () => {
+    const curlProcess = exec(cmd, () => {
     })
     if (stream) {
         let content = '';
