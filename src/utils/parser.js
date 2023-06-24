@@ -13,7 +13,7 @@ function parseHeaders(headers) {
     }
     let finalString = '';
     newHeaders.map((header) => {
-        finalString += ` -H '${header}' `
+        finalString += ` -H "${header}" `
     });
     return finalString;
 };

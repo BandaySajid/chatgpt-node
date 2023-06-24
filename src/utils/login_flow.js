@@ -28,7 +28,7 @@ function curl({ url, body, cookie, auth = false }) {
         }
         else {
             if (auth) {
-                const cmd = `${bypassPath} "${url}" -c ${cookiePath} -H 'Cookie: ${cookie}'`;
+                const cmd = `${bypassPath} "${url}" -c ${cookiePath} -H "Cookie: ${cookie}"`;
                 exec(cmd, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
