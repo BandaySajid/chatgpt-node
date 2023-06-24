@@ -6,23 +6,23 @@ let bypassPath = getBypassPath();
 
 export default function chat({ stream, url, headers, parent_message_id, message }) {
     const body = {
-        "action": "next",
-        "messages": [
+        action: 'next',
+        messages: [
             {
-                "id": generateRandomId(),
-                "author": { "role": "user" },
-                "content": { "content_type": "text", "parts": [parseMessage(message)] },
-                "metadata": {}
+                id: generateRandomId(),
+                author: { role: 'user' },
+                content: { content_type: 'text', parts: [parseMessage(message)] },
+                metadata: {}
             }
         ],
-        "parent_message_id": parent_message_id,
-        "model": "text-davinci-002-render-sha",
-        "timezone_offset_min": -330,
-        "history_and_training_disabled": false,
-        "arkose_token": null
+        parent_message_id,
+        model: 'text-davinci-002-render-sha',
+        timezone_offset_min: -330,
+        history_and_training_disabled: false,
+        arkose_token: null
     };
 
-    const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d "${JSON.stringify(body)}"`;
+    const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d "${JSON.stringify(body).replace(/"/g, '\\"')}"`;
     const curlProcess = exec(cmd, () => {
     })
     if (stream) {
