@@ -1,10 +1,14 @@
 @echo off
 
+setlocal
+
+set "dir=%~dp0"
+set "outputFile=%dir%\..\bypass\windows\curl-impersonate-win.zip"
 set "url=https://github.com/depler/curl-impersonate-win/releases/download/20230227/curl-impersonate-win.zip"
-set "outputFile=bypass\windows\curl-impersonate-win.zip"
+
 
 :: Create the output folder if it doesn't exist
-mkdir "bypass\windows" 2>nul
+mkdir "%dir%\..\bypass\windows" 2>nul
 
 :: Download the zip file using curl
 curl -L -o "%outputFile%" "%url%"
@@ -16,7 +20,7 @@ if not %errorlevel%==0 (
 )
 
 :: Extract the contents of the zip file to the desired folder
-powershell -Command "Expand-Archive -Path '%outputFile%' -DestinationPath 'bypass\windows' -Force"
+powershell -Command "Expand-Archive -Path '%outputFile%' -DestinationPath '%dir%\..\bypass\windows' -Force"
 
 :: Check if the extraction was successful
 if not %errorlevel%==0 (
@@ -25,7 +29,7 @@ if not %errorlevel%==0 (
 )
 
 REM Remove the archive file
-del "%outputFile%"
+del "%dir%\..\outputFile%"
 
 echo Zip file downloaded and extracted successfully.
 exit /b 0

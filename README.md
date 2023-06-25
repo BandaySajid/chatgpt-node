@@ -16,10 +16,10 @@ Currently, signin functionality is supported only with OPENAI : Auth0 :  email a
 - Retrieve responses in real-time via stream or as a complete response.
 
 ## Installation
+NOTE : Current version `1.0.6` is working fine on linux, but need to fix some authentication errors on windows
 
 To use chatgpt-node in your Node.js project, you can install it via npm:
 
-NOTE : Current version `1.0.6` is working fine on linux, but need to fix some authentication errors on windows
 
 ```shell
 node setup.js
@@ -35,9 +35,19 @@ npm install chatgpt-node
 
 To use chatgpt-node, you need to create an instance of the `Gpt` class by providing your ChatGPT email and password:
 
+NOTE: As currently there are some issues with version 1.0.7 on windows, you can manually provide auth Token when creating new instance of Gpt.
+
+`using authToken` -- necessary on windows for version 1.0.7
 ```javascript
 const { Gpt } = require("chatgpt-node");
 
+const user = new Gpt({
+  authToken: process.env.authToken, //your gpt authToken
+});
+```
+
+`using email and password`
+```
 const user = new Gpt({
   email: process.env.EMAIL, //your_chat_gpt_email
   password: process.env.PASSWORD, //your_chat_gpt_password

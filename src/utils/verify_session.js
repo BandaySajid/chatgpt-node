@@ -20,7 +20,7 @@ export default function verifySession(email) {
 
         if(session === {}){
             return {
-                authenticated: false, accessToken: undefined, error: 'no session saved'
+                authenticated: false, accessToken: undefined, error: null
             };
         }
 

@@ -1,8 +1,10 @@
 #!/bin/bash
 
 url="https://github.com/lwthiker/curl-impersonate/releases/download/v0.5.4/curl-impersonate-v0.5.4.x86_64-linux-gnu.tar.gz"
-outputFile="curl-impersonate.tar.gz"
-extractedFolder="bypass/linux"
+dir=${0%/*}
+outputFile="$dir/../curl-impersonate.tar.gz"
+extractedFolder="$dir/../bypass/linux"
+
 
 # Create the output folder if it doesn't exist
 mkdir -p "$extractedFolder"
