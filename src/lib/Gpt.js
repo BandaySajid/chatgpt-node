@@ -1,4 +1,4 @@
-import authorize from '../utils/login_flow_bak.js';
+import authorize from '../utils/login_flow.js';
 import verifySession from '../utils/verify_session.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);

@@ -121,9 +121,4 @@ class Curl {
     }
 };
 
-const curl = new Curl();
-
-(async function () {
-    const { data, status } = await curl.get('https://chat.openai.com/api/auth/session');
-    console.log(data, status)
-})();
+export {Curl};
