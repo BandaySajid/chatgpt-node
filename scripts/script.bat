@@ -4,7 +4,7 @@ setlocal
 
 set "dir=%~dp0"
 set "outputFile=%dir%\..\bypass\windows\curl-impersonate-win.zip"
-set "url=https://github.com/depler/curl-impersonate-win/releases/download/20230227/curl-impersonate-win.zip"
+set "url=https://github.com/BandaySajid/chatgpt-node/releases/download/v1.0.8/curl-impersonate-win.zip"
 
 
 :: Create the output folder if it doesn't exist

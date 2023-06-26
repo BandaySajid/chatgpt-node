@@ -1,10 +1,10 @@
 {
   "name": "chatgpt-node",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "setup": "node setup.js"
+    "postinstall": "node setup.js"
   },
   "keywords": [
     "GPT",
