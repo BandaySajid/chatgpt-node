@@ -3,51 +3,15 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const api = require('../../api/config.json');
 import querystring from 'node:querystring';
-import { exec } from 'node:child_process';
 import fs from 'fs/promises';
 import cookiefile from 'cookiefile';
 import os from 'os';
 import { fileURLToPath } from 'url';
-import { getBypassPath } from '../utils/parser.js';
+import { Curl } from './curl.js';
 const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const bypassPath = getBypassPath();
 const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
-
-function curl({ url, body, cookie, auth = false }) {
-    return new Promise((resolve, reject) => {
-        if (body) {
-            const cmd = `${bypassPath} -c cookie.txt -X POST "${url}" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8" -H "Cookie: ${cookie}" -H "Content-Type: application/x-www-form-urlencoded" -d "${body}"`;
-            exec(cmd, (err, stdout, stderr) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve(stdout);
-            });
-        }
-        else {
-            if (auth) {
-                const cmd = `${bypassPath} "${url}" -c cookie.txt -H "Cookie: ${cookie}"`;
-                exec(cmd, (err, stdout, stderr) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve(stdout);
-                });
-            }
-            else {
-                const cmd = `${bypassPath} -c cookie.txt "${url}"`;
-                exec(cmd, (err, stdout, stderr) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve(stdout);
-                });
-            }
-        }
-    })
-};
 
 function readCookie() {
     const cookiemap = new cookiefile.CookieMap(cookiePath);
@@ -117,22 +81,26 @@ function parseCookies(cookies) {
 
 async function authorize({ email, password }) {
     try {
-        await curl({ url: 'https://chat.openai.com/api/auth/session' });
+        const curl = new Curl();
+        await curl.get('https://chat.openai.com/api/auth/session');
 
         const allCookies = readCookie();
 
         const token = await cropCsrf(allCookies);
 
-
-        const getAuthUrl = await curl({
-            url: 'https://chat.openai.com/api/auth/signin/auth0?prompt=login', body: querystring.stringify({
-                "callbackUrl": "/",
-                "csrfToken": token,
-                "json": true
-            }), cookie: `${allCookies}`
+        const getAuthUrl = await curl.post('https://chat.openai.com/api/auth/signin/auth0?prompt=login', querystring.stringify({
+            "callbackUrl": "/",
+            "csrfToken": token,
+            "json": true
+        }), {
+            headers: {
+                'Cookie': allCookies,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
         });
 
-        const authUrl = new URL(JSON.parse(getAuthUrl).url);
+        const authUrl = new URL(getAuthUrl.data.url);
 
         const authCookies = readCookie();
 
@@ -201,16 +169,24 @@ async function authorize({ email, password }) {
 
             const authCodeUrl = resumeAuth.headers.location;
 
-            const authCode = await curl({ url: authCodeUrl, cookie: authCookies, auth: true });
+            const authCode = await curl.get(authCodeUrl, {
+                headers: {
+                    'Cookie': authCookies
+                }
+            });
 
             const sessionCookies = readCookie();
 
-            const session = await curl({ url: 'https://chat.openai.com/api/auth/session', cookie: sessionCookies, auth: true });
+            const session = await curl.get('https://chat.openai.com/api/auth/session', {
+                header: {
+                    'Cookie': sessionCookies
+                }
+            });
 
             const sessionFilePath = path.join(os.tmpdir(), '.gpt-js-session.json');
 
 
-            await fs.writeFile(sessionFilePath, JSON.stringify(JSON.parse(session)));
+            await fs.writeFile(sessionFilePath, JSON.stringify(session.data));
             try {
                 await fs.access(cookiePath)
                 await fs.unlink(cookiePath);
@@ -219,7 +195,7 @@ async function authorize({ email, password }) {
                 console.log('cookie file does not exist')
             }
 
-            return session;
+            return session.data;
         }
 
         else {

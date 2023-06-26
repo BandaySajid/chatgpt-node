@@ -95,7 +95,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                         contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
                     }
                     catch (err) {
-                        reject(new Error(`error while parsing message, try again. Error : ${err.message}`));
+
                     }
                 }
             });

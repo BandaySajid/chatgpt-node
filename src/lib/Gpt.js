@@ -25,22 +25,30 @@ class Gpt {
             throw new Error('Email and password should be at least 6 characters long');
         }
 
-
         this.#email = email;
         this.#password = password;
 
         this.#generateParentId();
     }
 
-    async authenticate() {
+    async authenticate(authToken) {
         try {
+            if (authToken && authToken.length > 30) {
+                this.accessToken = `Bearer ${authToken}`;
+                this.#headers.Authorization = this.accessToken;
+                return true;
+            };
             const { authenticated, accessToken, error } = verifySession(this.#email);
             if (error) {
                 throw new Error(error);
             };
             if (!authenticated) {
-                const data = await authorize({ email: this.#email, password: this.#password });
+                let data = await authorize({ email: this.#email, password: this.#password });
                 if (data) {
+                    console.log('data is here', JSON.parse(data));
+                    data = JSON.parse(data);
+                    this.accessToken = 'Bearer ' + data.accessToken;
+                    this.#headers.Authorization = this.accessToken;
                     return true;
                 }
                 throw new Error('Authentication failed: check your credentials');
@@ -48,6 +56,7 @@ class Gpt {
             this.accessToken = 'Bearer ' + accessToken;
             this.#headers.Authorization = this.accessToken;
             return true;
+
         }
         catch (err) {
             throw err
