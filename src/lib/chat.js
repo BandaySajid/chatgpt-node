@@ -61,16 +61,16 @@ export default function chat({ stream, url, headers, parent_message_id, message 
         return transFormStream;
     }
     else {
-
+        
         return new Promise((resolve, reject) => {
-
+            
             let contentArray = [];
             let nonStreamContent = '';
-
+            
             curlProcess.stdout.on('data', (chunk) => {
                 let jsonData = chunk.toString().split('data: ');
                 jsonData = jsonData.map(str => str.replace(/\n/g, ''));
-
+                
                 let validJson = [];
                 jsonData.map((elem) => {
                     try {
@@ -80,7 +80,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                     catch (err) {
                     }
                 });
-
+                
                 let main;
                 if (validJson.includes('DONE')) {
                     main = validJson[validJson.length - 2];
@@ -95,11 +95,11 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                         contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
                     }
                     catch (err) {
-
+                        
                     }
                 }
             });
-
+            
             curlProcess.stdout.on('end', () => {
                 resolve(contentArray[contentArray.length - 1]);
             })

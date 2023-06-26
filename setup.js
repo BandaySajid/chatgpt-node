@@ -16,14 +16,14 @@ function runScript() {
             if (err) {
                 console.error('Error:', err.message);
             } else {
-                const sourceDirectory = path.join(__dirname, 'bypass', 'windows', 'curl-impersonate-win', 'config');
-                const destinationDirectory = path.join(__dirname, 'config');
+                // const sourceDirectory = path.join(__dirname, 'bypass', 'windows', 'curl-impersonate-win', 'config');
+                // const destinationDirectory = path.join(__dirname, 'config');
 
-                fs.rename(sourceDirectory, destinationDirectory, (err) => {
-                    if (err) {
-                        console.error('Error moving directory:', err);
-                    }
-                });
+                // fs.rename(sourceDirectory, destinationDirectory, (err) => {
+                //     if (err) {
+                //         console.error('Error moving directory:', err);
+                //     }
+                // });
                 console.log(stdout);
             }
         });
