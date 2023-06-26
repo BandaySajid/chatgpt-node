@@ -11,7 +11,8 @@ import { Curl } from './curl.js';
 const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cookiePath = path.join(__dirname, '..', '..', 'cookie.txt');
+const cookiePath = path.join(__dirname, '..', '..', '..', '..', 'cookie.txt');
+
 
 function readCookie() {
     const cookiemap = new cookiefile.CookieMap(cookiePath);
