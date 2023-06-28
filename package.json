@@ -1,6 +1,6 @@
 {
   "name": "chatgpt-node",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "main": "node/index.js",
   "type": "module",
   "scripts": {
