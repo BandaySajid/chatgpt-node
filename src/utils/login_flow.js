@@ -90,20 +90,20 @@ async function authorize({ email, password }) {
         const token = await cropCsrf(allCookies);
 
         const getAuthUrl = await curl.post('https://chat.openai.com/api/auth/signin/auth0?prompt=login', querystring.stringify({
-            "callbackUrl": "/",
-            "csrfToken": token,
-            "json": true
+            callbackUr: "/",
+            csrfToken: token,
+            json: true
         }), {
             headers: {
                 'Cookie': allCookies,
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept': '*/*',
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
 
         const authUrl = new URL(getAuthUrl.data.url);
 
-        const authCookies = readCookie();
+        const authCookies = getAuthUrl.headers['set-cookie'].join('; ');
 
         const auth = api.login.auth;
 
@@ -176,10 +176,12 @@ async function authorize({ email, password }) {
                 }
             });
 
-            const sessionCookies = readCookie();
+
+            const sessionCookies = authCode.headers['set-cookie'].join('; ');
+
 
             const session = await curl.get('https://chat.openai.com/api/auth/session', {
-                header: {
+                headers: {
                     'Cookie': sessionCookies
                 }
             });
