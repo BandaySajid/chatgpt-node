@@ -1,6 +1,6 @@
 {
   "name": "chatgpt-node",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -20,7 +20,9 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "cookiefile": "^1.0.10"
+    "axios": "^1.4.0",
+    "cookiefile": "^1.0.10",
+    "tar": "^6.1.15"
   },
   "repository": {
     "type": "git",
