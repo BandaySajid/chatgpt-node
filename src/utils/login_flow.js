@@ -176,6 +176,10 @@ async function authorize({ email, password }) {
                 }
             });
 
+            if(authCode.status === 200){
+                throw new Error('error with authentication');
+            }
+
 
             const sessionCookies = authCode.headers['set-cookie'].join('; ');
 
