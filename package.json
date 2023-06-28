@@ -1,7 +1,7 @@
 {
   "name": "chatgpt-node",
-  "version": "1.0.16",
-  "main": "node/index.js",
+  "version": "1.0.17",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "postinstall": "node setup.js"
