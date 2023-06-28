@@ -1,7 +1,12 @@
-const { exec } = require('node:child_process');
-const os = require('os');
+import { exec } from 'child_process';
+import os from 'os';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+import { fileURLToPath } from 'url';
 const path = require('path');
-const fs = require('fs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import fs from 'fs';
 
 function runScript() {
     const isWindows = os.platform() === 'win32';
