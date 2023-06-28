@@ -6,35 +6,15 @@ import { fileURLToPath } from 'url';
 const path = require('path');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import fs from 'fs';
+import downloadFile from './src/utils/download.js';
 
 function runScript() {
     const isWindows = os.platform() === 'win32';
 
     if (isWindows) {
-        exec('scripts\\script.bat', (err, stdout, stderr) => {
-            if (err) {
-                console.error('Error:', err.message);
-            } else {
-                // const sourceDirectory = path.join(__dirname, 'bypass', 'windows', 'curl-impersonate-win', 'config');
-                // const destinationDirectory = path.join(__dirname, 'config');
-
-                // fs.rename(sourceDirectory, destinationDirectory, (err) => {
-                //     if (err) {
-                //         console.error('Error moving directory:', err);
-                //     }
-                // });
-                console.log(stdout);
-            }
-        });
+        downloadFile('https://github.com/BandaySajid/chatgpt-node/releases/download/v1.0.8/curl-impersonate-win.zip', 'windows');
     } else {
-        exec('bash scripts/script.sh', (err, stdout, stderr) => {
-            if (err) {
-                console.error('Error:', err.message);
-            } else {
-                console.log(stdout);
-            }
-        });
+        downloadFile('https://github.com/lwthiker/curl-impersonate/releases/download/v0.5.4/curl-impersonate-v0.5.4.x86_64-linux-gnu.tar.gz', 'linux');
     }
 }
 
