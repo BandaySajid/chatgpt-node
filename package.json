@@ -1,12 +1,10 @@
 {
   "name": "chatgpt-node",
   "version": "1.0.15",
-  "main": "dist/index.js",
+  "main": "node/index.js",
   "type": "module",
   "scripts": {
-    "postinstall": "node setup.js",
-    "build": "babel src --out-dir dist",
-    "prepublishOnly": "npm run build"
+    "postinstall": "node setup.js"
   },
   "keywords": [
     "GPT",
