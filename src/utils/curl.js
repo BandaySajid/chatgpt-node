@@ -21,7 +21,7 @@ class Curl {
             try {
                 payload.body = JSON.parse(payload.body);
             } catch (err) { }
-            if ([200, 201, 301].includes(payload.status)) {
+            if ([200, 201, 301, 302].includes(payload.status)) {
                 return {
                     data: payload.body,
                     headers: payload.headers,
@@ -42,14 +42,14 @@ class Curl {
     async post(url, data, opts = {}) {
         const headers = opts.headers ? Object.entries(opts.headers).map(([key, value]) => `-H '${key}: ${value}'`).join(' ') : '';
         const params = opts.params ? `?${qs.stringify(opts.params)}` : '';
-        const curlString = `${this._getCurlExec()} cookie.txt ${headers} -i -L -X POST -d '${JSON.stringify(data)}'${this.proxy ? ` -x ${this.proxy}` : ''} --connect-timeout 30 --max-time 30 -k ${url}${params}`;
+        const curlString = `${this._getCurlExec()} -c cookie.txt ${headers} -i -L -X POST -d '${data}'${this.proxy ? ` -x ${this.proxy}` : ''} --connect-timeout 30 --max-time 30 -k ${url}${params}`;
         const { stdout, stderr, code, error } = await this.shell(curlString);
         if (code === 0) {
             const payload = this._stdToOutPut(stdout);
             try {
                 payload.body = JSON.parse(payload.body);
             } catch (err) { }
-            if ([200, 201, 301].includes(payload.status)) {
+            if ([200, 201, 301, 302].includes(payload.status)) {
                 return {
                     data: payload.body,
                     headers: payload.headers,
@@ -102,7 +102,17 @@ class Curl {
                     status = Number(stt.trim());
                 } else {
                     const [field, value] = header.split(': ');
-                    headers[field] = value;
+                    if (field.toLowerCase() === 'set-cookie') {
+                        if (!headers[field]) {
+                            headers[field] = [];
+                        }
+                        headers[field].push(value);
+                    } else if (headers[field]) {
+                        // If the header field already exists, append the new value
+                        headers[field] += `, ${value}`;
+                    } else {
+                        headers[field] = value;
+                    }
                 }
             }
             if (isPage === 2) {
@@ -116,9 +126,10 @@ class Curl {
         };
     }
 
+
     _getCurlExec() {
         return `${this.curlPath}`;
     }
 };
 
-export {Curl};
+export { Curl };

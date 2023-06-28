@@ -18,7 +18,7 @@ export default function verifySession(email) {
         const sessionPath = path.join(os.tmpdir(), '.gpt-js-session.json');
         const session = require(sessionPath);
 
-        if(session === {}){
+        if(Object.keys(session.length <= 0)){
             return {
                 authenticated: false, accessToken: undefined, error: null
             };
