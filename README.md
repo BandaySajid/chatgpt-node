@@ -21,12 +21,6 @@ To use chatgpt-node in your Node.js project, you can install it via npm:
 ```shell
 npm install chatgpt-node
 ```
-
-```shell
-npm run setup
-```
-Running `npm run setup` will install all the required dependencies for windows and linux.
-
 ## Usage
 
 To use chatgpt-node, you need to create an instance of the `Gpt` class by providing your ChatGPT email and password:
