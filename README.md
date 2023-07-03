@@ -4,10 +4,9 @@
 
 chatgpt-node is a Node.js library that provides access to the ChatGPT web-API for free. While ChatGPT provides an API to access its model, it is a paid service, making it inaccessible for everyone. The chatgpt-node library aims to bridge this gap by allowing developers to authenticate/login via web-api and start conversations with the ChatGPT model, enabling them to integrate chatbot functionality into their applications, websites, and more.
 
-
 ## NOTE
 
-Currently, signin functionality is supported only with OPENAI : Auth0 :  email and password. `GOOGLE, MICROSOFT, APPLE` Oauth login is not supported. 
+Currently, signin functionality is supported only with OPENAI : Auth0 : email and password. `GOOGLE, MICROSOFT, APPLE` Oauth login is not supported.
 
 ## Features
 
@@ -16,11 +15,13 @@ Currently, signin functionality is supported only with OPENAI : Auth0 :  email a
 - Retrieve responses in real-time via stream or as a complete response.
 
 ## Installation
+
 To use chatgpt-node in your Node.js project, you can install it via npm:
 
 ```shell
 npm install chatgpt-node
 ```
+
 ## Usage
 
 To use chatgpt-node, you need to create an instance of the `Gpt` class by providing your ChatGPT email and password:
@@ -28,16 +29,17 @@ To use chatgpt-node, you need to create an instance of the `Gpt` class by provid
 NOTE: If you are facing issues with authentication, you can manually provide auth Token when creating new instance of Gpt.
 
 ```javascript
-const { Gpt } = require("chatgpt-node");
+import { Gpt } from "chatgpt-node";
 
 const user = new Gpt();
 
-await user.authenticate(__your__auth__token) //your authorization token.
+await user.authenticate(__your__auth__token); //your authorization token.
 ```
 
 `using email and password`
+
 ```javascript
-const { Gpt } = require("chatgpt-node");
+import { Gpt } from "chatgpt-node";
 
 const user = new Gpt({
   email: process.env.EMAIL, //your_chat_gpt_email

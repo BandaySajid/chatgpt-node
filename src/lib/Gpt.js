@@ -45,7 +45,6 @@ class Gpt {
             if (!authenticated) {
                 let data = await authorize({ email: this.#email, password: this.#password });
                 if (data) {
-                    console.log('data is here', JSON.parse(data));
                     data = JSON.parse(data);
                     this.accessToken = 'Bearer ' + data.accessToken;
                     this.#headers.Authorization = this.accessToken;
