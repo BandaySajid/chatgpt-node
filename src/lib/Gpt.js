@@ -12,6 +12,7 @@ class Gpt {
     #headers = api.conversation.headers;
     #chatUrl = api.conversation.url;
     #parent_message_id;
+    #conversation_id;
     constructor({ email, password } = {}) {
         if (!email || !password) {
             throw new Error('Email or password not provided');
@@ -74,7 +75,31 @@ class Gpt {
         if (randomParentId) {
             this.#generateParentId();
         };
-        return chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, message });
+
+        let final;
+
+        if (stream) {
+            const { readableStream, myEmitter } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
+            myEmitter.on('conv_id', (conv_id, message_id) => {
+                this.#conversation_id = conv_id;
+                this.#parent_message_id = message_id
+            });
+
+            this.conv_count++;
+
+            final = readableStream;
+
+        } else {
+            const { conversation_id, finalData, message_id } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
+            this.#conversation_id = conversation_id;
+            this.#parent_message_id = message_id;
+
+            this.conv_count++;
+            final = finalData;
+        }
+
+
+        return final;
     };
 };
 

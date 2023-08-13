@@ -1,10 +1,27 @@
 import { exec } from 'child_process';
-import { Readable, Transform } from 'stream';
+import { Readable } from 'stream';
 import generateRandomId from '../utils/generateRandomId.js';
 import { getBypassPath, parseHeaders, parseMessage } from '../utils/parser.js';
 let bypassPath = getBypassPath();
+import { Curl } from "../utils/curl.js";
+import EventEmitter from 'events';
+const curl = new Curl();
 
-export default function chat({ stream, url, headers, parent_message_id, message }) {
+class eventEmitter extends EventEmitter { };
+
+const myEmitter = new eventEmitter();
+
+export default function chat({ stream, url, headers, parent_message_id, conversation_id, message }) {
+    let readableStream = undefined;
+    let message_id;
+
+    if (stream) {
+        readableStream = new Readable({
+            read() { }
+        });
+    };
+
+    let convId = undefined;
     const body = {
         action: 'next',
         messages: [
@@ -15,21 +32,45 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                 metadata: {}
             }
         ],
-        parent_message_id,
+        parent_message_id: parent_message_id,
         model: 'text-davinci-002-render-sha',
         timezone_offset_min: -330,
         history_and_training_disabled: false,
         arkose_token: null
     };
 
+    if (conversation_id) {
+        body.conversation_id = conversation_id;
+        convId = conversation_id;
+    };
+
     const cmd = `${bypassPath} -s -X POST ${url} ${parseHeaders(headers)} -d "${JSON.stringify(body).replace(/"/g, '\\"')}"`;
-    const curlProcess = exec(cmd, () => {
+    const curlProcess = exec(cmd, async () => {
+        try {
+            headers.Accept = "*/*"
+            const convResp = await curl.get('https://chat.openai.com/backend-api/conversations?offset=0&limit=28&order=updated', {
+                headers: headers
+            });
+
+            convId = convResp.data["items"][0]?.id;
+
+            const titleResp = await curl.post(`https://chat.openai.com/backend-api/conversation/gen_title/${convId}`, {
+                message_id: message_id
+            }, {
+                headers: headers
+            });
+
+            conversation_id = convId;
+
+            myEmitter.emit('conv_id', conversation_id, message_id);
+        }
+        catch (err) {
+            console.log('an error when generating title', err);
+        };
+
     });
     if (stream) {
         let content = '';
-        const readableStream = new Readable({
-            read() { }
-        });
 
         curlProcess.stdout.on('data', (chunk) => {
             let jsonData = chunk.toString().split('data: ');
@@ -38,7 +79,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
             let validJson = [];
             jsonData.map((elem) => {
                 try {
-                    JSON.parse(elem);
+                    message_id = JSON.parse(elem).message_id;
                     validJson.push(elem);
                 }
                 catch (err) {
@@ -73,12 +114,11 @@ export default function chat({ stream, url, headers, parent_message_id, message 
             readableStream.emit('error', err);
         });
 
-        return readableStream;
+        return { readableStream, myEmitter };
     }
     else {
 
-        return new Promise((resolve, reject) => {
-
+        const finalData = new Promise((resolve, reject) => {
             let contentArray = [];
             let nonStreamContent = '';
 
@@ -89,7 +129,7 @@ export default function chat({ stream, url, headers, parent_message_id, message 
                 let validJson = [];
                 jsonData.map((elem) => {
                     try {
-                        JSON.parse(elem);
+                        message_id = JSON.parse(elem).message_id;
                         validJson.push(elem);
                     }
                     catch (err) {
@@ -125,6 +165,10 @@ export default function chat({ stream, url, headers, parent_message_id, message 
             });
 
         });
+
+        return {
+            conversation_id: convId, finalData, message_id
+        }
     }
 };
 
