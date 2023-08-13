@@ -54,9 +54,9 @@ export default function chat({ stream, url, headers, parent_message_id, conversa
 
             convId = convResp.data["items"][0]?.id;
 
-            const titleResp = await curl.post(`https://chat.openai.com/backend-api/conversation/gen_title/${convId}`, {
+            const titleResp = await curl.post(`https://chat.openai.com/backend-api/conversation/gen_title/${convId}`, JSON.stringify({
                 message_id: message_id
-            }, {
+            }), {
                 headers: headers
             });
 
