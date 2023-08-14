@@ -79,22 +79,21 @@ class Gpt {
         let final;
 
         if (stream) {
-            const { readableStream } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
+            const { readableStream } = chat({ url: this.#chatUrl, headers: this.#headers, stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
             myEmitter.on('conv_id', (conv_id, message_id) => {
                 this.#conversation_id = conv_id;
                 this.#parent_message_id = message_id
             });
 
-            this.conv_count++;
-
             final = readableStream;
 
         } else {
-            const { conversation_id, finalData, message_id } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
-            this.#conversation_id = conversation_id;
-            this.#parent_message_id = message_id;
+            const { finalData } = chat({ url: this.#chatUrl, headers: this.#headers, stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
+            myEmitter.on('conv_id', (conv_id, message_id) => {
+                this.#conversation_id = conv_id;
+                this.#parent_message_id = message_id
+            });
 
-            this.conv_count++;
             final = finalData;
         }
 

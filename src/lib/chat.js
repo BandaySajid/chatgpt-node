@@ -12,6 +12,7 @@ class eventEmitter extends EventEmitter { };
 const myEmitter = new eventEmitter();
 
 function chat({ stream, url, headers, parent_message_id, conversation_id, message }) {
+
     let readableStream = undefined;
     let message_id;
 
@@ -118,13 +119,14 @@ function chat({ stream, url, headers, parent_message_id, conversation_id, messag
                 for (const elem of jsonData) {
                     try {
                         const parsedElem = JSON.parse(elem);
-                        if (parsedElem.message.status === 'finished_successfully') {
-                            break;
-                        }
                         message_id = parsedElem.message.id;
 
                         const messageContent = parsedElem.message.content.parts[0];
                         nonStreamContent += messageContent.slice(nonStreamContent.length);
+                        if (parsedElem.message.status === 'finished_successfully') {
+                            contentArray.push(JSON.stringify({ status: parsedElem.message.status, message: nonStreamContent }));
+                            break;
+                        }
                         contentArray.push(JSON.stringify({ status: parsedElem.message.status, message: nonStreamContent }));
                     }
                     catch (err) {
@@ -144,7 +146,7 @@ function chat({ stream, url, headers, parent_message_id, conversation_id, messag
         });
 
         return {
-            conversation_id: convId, finalData, message_id
+            finalData
         }
     }
 };
