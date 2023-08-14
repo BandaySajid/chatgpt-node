@@ -11,7 +11,7 @@ class eventEmitter extends EventEmitter { };
 
 const myEmitter = new eventEmitter();
 
-export default function chat({ stream, url, headers, parent_message_id, conversation_id, message }) {
+function chat({ stream, url, headers, parent_message_id, conversation_id, message }) {
     let readableStream = undefined;
     let message_id;
 
@@ -76,32 +76,21 @@ export default function chat({ stream, url, headers, parent_message_id, conversa
             let jsonData = chunk.toString().split('data: ');
             jsonData = jsonData.map(str => str.replace(/\n/g, ''));
 
-            let validJson = [];
-            jsonData.map((elem) => {
+            for (const elem of jsonData) {
                 try {
-                    message_id = JSON.parse(elem).message_id;
-                    validJson.push(elem);
+                    const parsedElem = JSON.parse(elem);
+                    message_id = parsedElem.message.id;
+
+                    const messageContent = parsedElem.message.content.parts[0];
+                    content += messageContent.slice(content.length);
+                    if (parsedElem.message.status === 'finished_successfully') {
+                        readableStream.push(JSON.stringify({ status: parsedElem.message.status, message: content }));
+                        break;
+                    }
+                    readableStream.push(JSON.stringify({ status: parsedElem.message.status, message: content }));
                 }
                 catch (err) {
-                }
-            });
-
-
-            let main;
-            if (validJson.includes('DONE')) {
-                main = validJson[validJson.length - 2];
-            }
-            else {
-                main = validJson[validJson.length - 1];
-            }
-            if (validJson.length > 0) {
-                try {
-                    const parsed = JSON.parse(main).message.content.parts[0];
-                    content += parsed.slice(content.length);
-                    readableStream.push(JSON.stringify({ status: 'message', message: content }));
-                }
-                catch (err) {
-
+                    //invalid json
                 }
             }
         });
@@ -114,7 +103,7 @@ export default function chat({ stream, url, headers, parent_message_id, conversa
             readableStream.emit('error', err);
         });
 
-        return { readableStream, myEmitter };
+        return { readableStream };
     }
     else {
 
@@ -126,32 +115,20 @@ export default function chat({ stream, url, headers, parent_message_id, conversa
                 let jsonData = chunk.toString().split('data: ');
                 jsonData = jsonData.map(str => str.replace(/\n/g, ''));
 
-                let validJson = [];
-                jsonData.map((elem) => {
+                for (const elem of jsonData) {
                     try {
-                        message_id = JSON.parse(elem).message_id;
-                        validJson.push(elem);
+                        const parsedElem = JSON.parse(elem);
+                        if (parsedElem.message.status === 'finished_successfully') {
+                            break;
+                        }
+                        message_id = parsedElem.message.id;
+
+                        const messageContent = parsedElem.message.content.parts[0];
+                        nonStreamContent += messageContent.slice(nonStreamContent.length);
+                        contentArray.push(JSON.stringify({ status: parsedElem.message.status, message: nonStreamContent }));
                     }
                     catch (err) {
-                    }
-                });
-
-
-                let main;
-                if (validJson.includes('DONE')) {
-                    main = validJson[validJson.length - 2];
-                }
-                else {
-                    main = validJson[validJson.length - 1];
-                }
-                if (validJson.length > 0) {
-                    try {
-                        const parsed = JSON.parse(main).message.content.parts[0];
-                        nonStreamContent += parsed.slice(nonStreamContent.length);
-                        contentArray.push(JSON.stringify({ status: 'message', message: nonStreamContent }));
-                    }
-                    catch (err) {
-
+                        //invalid json
                     }
                 }
             });
@@ -172,4 +149,5 @@ export default function chat({ stream, url, headers, parent_message_id, conversa
     }
 };
 
+export { chat, myEmitter };
 

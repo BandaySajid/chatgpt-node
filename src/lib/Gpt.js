@@ -3,7 +3,7 @@ import verifySession from '../utils/verify_session.js';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const api = require('../../api/config.json');
-import chat from './chat.js';
+import { chat, myEmitter } from './chat.js';
 import generateRandomId from '../utils/generateRandomId.js';
 
 class Gpt {
@@ -79,7 +79,7 @@ class Gpt {
         let final;
 
         if (stream) {
-            const { readableStream, myEmitter } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
+            const { readableStream } = chat({ url: this.#chatUrl, headers: this.#headers, stream: stream, parent_message_id: this.#parent_message_id, conversation_id: this.#conversation_id, message });
             myEmitter.on('conv_id', (conv_id, message_id) => {
                 this.#conversation_id = conv_id;
                 this.#parent_message_id = message_id
